@@ -43,7 +43,7 @@ app.post("/urls", (req, res) => {
   let alphaKey = req.body.shortURL = gernerateRandomString();  // Log the POST request body to the console
   urlDatabase[alphaKey] = req.body.longURL;
   //console.log(urlDatabase);
-  res.redirect(`/urls/${alphaKey}`);         // Respond with a redirect to urls/:shortURs;
+  res.redirect(`/urls/${alphaKey}`); // Respond with a redirect to urls/:shortURL;
 });
 
 //writes database to the screen as a JSON string
@@ -60,6 +60,15 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls');
 });
 
+//Edit Current URL from url_show.ejs
+app.post('/urls/:shortURL/edit', (req, res) => {
+  let shortURL = req.params.shortURL;
+  let longURL = req.body.longURL;
+  console.log(req.body);
+  urlDatabase[shortURL] = longURL;
+  res.redirect('/urls')
+});
+
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
@@ -69,7 +78,7 @@ app.get(`/u/:shortURL`, (req, res) => {
   if (!longURL.startsWith('http')) {
     longURL = `http://${longURL}`;
   }
-  console.log(longURL);
+  //console.log(longURL);
   res.redirect(longURL);
 });
 
