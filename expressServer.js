@@ -29,7 +29,7 @@ const urlDatabase = {
 
 //Main page
 app.get('/', (req, res) => {
-  console.log(`request for '/' being made on port ${PORT}`);
+  console.log(`request for '/' being made on port now ${PORT}`);
   res.send('hello!');
 });
 
