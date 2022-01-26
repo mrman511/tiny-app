@@ -38,6 +38,8 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {};
+
 //Main page
 app.get('/', (req, res) => {
   console.log(`request for '/' being made on port now ${PORT}`);
@@ -61,7 +63,7 @@ app.post("/urls", (req, res) => {
 
 //writes database to the screen as a JSON string
 app.get("/urls", (req, res) => {
-
+  console.log(req.cookies);
   const templateVars = {
     urls: urlDatabase,
     username: req.cookies["username"]
@@ -119,8 +121,8 @@ app.get('/urls/:shortURL', (req, res) => {
 app.post('/login', (req, res) => {
   const username = req.body.username;
   res.cookie('username', username)
-  console.log(req.cookies);
-  console.log(req.signedCookies);
+  //console.log(req.cookies);
+  //console.log(req.signedCookies);
   res.redirect('/urls');
 });
 
@@ -130,11 +132,27 @@ app.post('/logout', (req, res) => {
 })
 
 //
-//Register
+//Registration
 //
 app.get('/register', (req, res) => {
   res.render('register', {username: req.cookies["username"]});
 });
+
+app.post('/register', (req, res) => {
+  const id = gernerateRandomString(4);
+  const email = req.body.email;
+  const password = req.body.password;
+
+  users[id] ={
+    id,
+    email,
+    password,
+  }
+  res.cookie('user_id', id);
+  //console.log(users);
+  res.redirect('/urls')
+});
+
 
 
 app.get('*', (req, res) => {
