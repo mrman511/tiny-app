@@ -2,10 +2,11 @@ const express = require('express');
 const req = require('express/lib/request');
 const PORT = 8080;
 const app = express();
+const cookieParser = require('cookie-parser');
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
-
+app.use(cookieParser());
 app.set('view engine', 'ejs');
 
 const gernerateRandomString = () => {
@@ -32,6 +33,14 @@ app.get('/', (req, res) => {
   console.log(`request for '/' being made on port now ${PORT}`);
   res.send('hello!');
 });
+//cookie handler
+app.post('/login', (req, res) => {
+  const username = req.body.username;
+  res.cookie('username', username)
+  console.log(req.cookies);
+  console.log(req.signedCookies);
+  res.redirect('/urls');
+});
 
 app.get('/Paul', (req, res) => {
   console.log(`request for '/Paul made on port ${PORT}'`)
@@ -49,7 +58,10 @@ app.post("/urls", (req, res) => {
 //writes database to the screen as a JSON string
 app.get("/urls", (req, res) => {
 
-  const templateVars = {urls: urlDatabase}
+  const templateVars = {
+    urls: urlDatabase,
+    username: req.cookies["username"]
+  }
   res.render('urls_index', templateVars);
 });
 
@@ -59,6 +71,11 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   delete urlDatabase[shortURL];
   res.redirect('/urls');
 });
+
+app.post('/logout', (req, res) => {
+  res.clearCookie('username');
+  res.redirect('/urls');
+})
 
 //Edit Current URL from url_show.ejs
 app.post('/urls/:shortURL/edit', (req, res) => {
