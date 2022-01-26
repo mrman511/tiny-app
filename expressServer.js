@@ -87,7 +87,7 @@ app.post('/urls/:shortURL/edit', (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  res.render("urls_new", {username: req.cookies["username"]});
 });
 
 app.get(`/u/:shortURL`, (req, res) => {
@@ -101,8 +101,12 @@ app.get(`/u/:shortURL`, (req, res) => {
 
 app.get('/urls/:shortURL', (req, res) => {
   //console.log(req);
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
-  //console.log(templateVars)
+  const templateVars = { 
+    shortURL: req.params.shortURL, 
+    longURL: urlDatabase[req.params.shortURL],
+    username: req.cookies["username"] 
+  };
+  console.log(templateVars.username);
   res.render('url_show', templateVars);
   //res.redirect(templateVars.longURL)
 });
