@@ -9,10 +9,15 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.set('view engine', 'ejs');
 
-const gernerateRandomString = () => {
+
+//
+//Relavent functions
+//
+
+const gernerateRandomString = (num) => {
   const alphabet = 'abcdefghijklmnopqrstuvwxyz'
   let randomItems = [];
-  for (let i = 0; randomItems.length < 6; i++){
+  for (let i = 0; randomItems.length < num; i++){
     let num = Math.floor(Math.random() * 2);
     if (num === 0){
       randomItems.push(String(Math.floor(Math.random() * 10)));
@@ -22,6 +27,11 @@ const gernerateRandomString = () => {
   } 
   return(randomItems.join(''))
 };
+
+
+//
+//DATA objects
+//
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -34,13 +44,7 @@ app.get('/', (req, res) => {
   res.send('hello!');
 });
 //cookie handler
-app.post('/login', (req, res) => {
-  const username = req.body.username;
-  res.cookie('username', username)
-  console.log(req.cookies);
-  console.log(req.signedCookies);
-  res.redirect('/urls');
-});
+
 
 app.get('/Paul', (req, res) => {
   console.log(`request for '/Paul made on port ${PORT}'`)
@@ -49,7 +53,7 @@ app.get('/Paul', (req, res) => {
 
 app.post("/urls", (req, res) => {
   
-  let alphaKey = req.body.shortURL = gernerateRandomString();  // Log the POST request body to the console
+  let alphaKey = req.body.shortURL = gernerateRandomString(6);  // Log the POST request body to the console
   urlDatabase[alphaKey] = req.body.longURL;
   //console.log(urlDatabase);
   res.redirect(`/urls/${alphaKey}`); // Respond with a redirect to urls/:shortURL;
@@ -72,10 +76,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls');
 });
 
-app.post('/logout', (req, res) => {
-  res.clearCookie('username');
-  res.redirect('/urls');
-})
+
 
 //Edit Current URL from url_show.ejs
 app.post('/urls/:shortURL/edit', (req, res) => {
@@ -111,17 +112,35 @@ app.get('/urls/:shortURL', (req, res) => {
   //res.redirect(templateVars.longURL)
 });
 
+//
+//LogIn Status
+//
+
+app.post('/login', (req, res) => {
+  const username = req.body.username;
+  res.cookie('username', username)
+  console.log(req.cookies);
+  console.log(req.signedCookies);
+  res.redirect('/urls');
+});
+
+app.post('/logout', (req, res) => {
+  res.clearCookie('username');
+  res.redirect('/urls');
+})
+
+//
+//Register
+//
+app.get('/register', (req, res) => {
+  res.render('register', {username: req.cookies["username"]});
+});
 
 
-//writes HTML to the screen
-// app.get("/hello", (req, res) => {
-//   res.send("<html><body>Hello <b>World</b></body></html>\n");
-// });
-
-// app.get('*', (req, res) => {
-//   console.log(`request for invalid path made on ${PORT}`);
-//   res.send('ERROR: 404. Path not found');
-// });
+app.get('*', (req, res) => {
+  console.log(`request for invalid path made on ${PORT}`);
+  res.send('ERROR: 404. Path not found');
+});
 
 app.listen(PORT, () => {
   console.log(`the server is listening or port ${PORT}`);
