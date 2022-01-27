@@ -47,16 +47,19 @@ const gernerateRandomString = (num) => {
   return(randomItems.join(''))
 };
 
-const searchUsersByParam = (param) => {
-  
-  for (let user in users){
-    
-    for (let key in users[user]) {
-      if (param === users[user][key])
+const searchUsersByParam = (email, password) => {
+  if (!password) {
+    for (let user in users){
+        if (email === users[user].email)
+        return users[user].id
+      }
+    return false;
+  } else {
+    if (users[searchUsersByParam(email)].password === password) {
       return true;
     }
+    return false;
   }
-  return false;
 }
 
 const attemptLogin = (email, password) => {
@@ -125,7 +128,12 @@ app.post('/urls/:shortURL/edit', (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new", {username: req.cookies["username"]});
+  const user = users[req.cookies['user_id']];
+  const templateVars = {
+    user,
+    urls: urlDatabase,
+  }
+  res.render("urls_new", templateVars);
 });
 
 app.get(`/u/:shortURL`, (req, res) => {
@@ -160,9 +168,14 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  console.log(attemptLogin(email, password));
-  attemptLogin(email, password)? res.cookie('user_id', attemptLogin(email, password)) : res.redirect('/login') ;
-  
+  //console.log(attemptLogin(email, password));
+
+  if (searchUsersByParam(email, password)) {
+    attemptLogin(email, password)? res.cookie('user_id', attemptLogin(email, password)) : res.redirect('/login') ;
+  } else {
+    res.statusCode = 403
+  }
+
   res.redirect('/urls');
 });
 
