@@ -53,6 +53,11 @@ const searchUsersByParam = (param) => {
   return false;
 }
 
+// const attemptLogin = (email, password) => {
+//   for (let user in users) {
+
+//   }
+// }
 
 //
 //for fun ignore
@@ -142,11 +147,15 @@ app.get('/urls/:shortURL', (req, res) => {
 //LogIn Status
 //
 
+app.get('/login', (req, res) => {
+  res.render('login.ejs');
+});
+
 app.post('/login', (req, res) => {
-  const username = req.body.username;
-  res.cookie('username', username)
-  //console.log(req.cookies);
-  //console.log(req.signedCookies);
+  const email = req.body.email;
+  const password = req.body.password;
+  
+  
   res.redirect('/urls');
 });
 

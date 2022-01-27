@@ -4,15 +4,16 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TinyApp - Register</title>
+  <title>TinyApp - Login</title>
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 </head>
 <body>
   <%- include('partials/_loginHeader') %>
-  <h4>Please Enter Your Email and Password</h4>
+  
   <div>
+    <h3>Please Enter Your Email and Password</h3>
     <form action ="/register" method ="POST" style = "float: right; width: 70%;" >
       <div>
         <h5 style = "display: inline;">Email:</h5>
