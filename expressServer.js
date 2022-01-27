@@ -95,7 +95,10 @@ app.get('/', (req, res) => {
 app.post("/urls", (req, res) => {
   
   let alphaKey = req.body.shortURL = gernerateRandomString(6);  // Log the POST request body to the console
-  urlDatabase[alphaKey] = req.body.longURL;
+  urlDatabase[alphaKey] = {
+    longURL: req.body.longURL,
+    userID: req.cookies['user_id']
+  };
   //console.log(urlDatabase);
   res.redirect(`/urls/${alphaKey}`); // Respond with a redirect to urls/:shortURL;
 });
@@ -107,6 +110,8 @@ app.get("/urls", (req, res) => {
     user,
     urls: urlDatabase,
   }
+  console.log(templateVars.urls);
+  console.log(user);
   res.render('urls_index', templateVars);
 });
 
@@ -124,7 +129,10 @@ app.post('/urls/:shortURL/edit', (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = req.body.longURL;
   console.log(req.body);
-  urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL] = {
+    longURL,
+    userID: req.cookies['user_id']
+  };
   res.redirect('/urls')
 });
 
@@ -138,7 +146,9 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get(`/u/:shortURL`, (req, res) => {
-  let longURL = (urlDatabase[req.params.shortURL]);
+  let longURL = (urlDatabase[req.params.shortURL].longURL);
+  //console.log(urlDatabase);
+  //console.log(req)
   if (!longURL.startsWith('http')) {
     longURL = `http://${longURL}`;
   }
@@ -148,12 +158,12 @@ app.get(`/u/:shortURL`, (req, res) => {
 
 app.get('/urls/:shortURL', (req, res) => {
   let user = users[req.cookies['user_id']]
+  console.log()
   const templateVars = {
     user,
     shortURL: req.params.shortURL, 
-    longURL: urlDatabase[req.params.shortURL], 
+    longURL: urlDatabase[req.params.shortURL].longURL, 
   };
-  console.log(templateVars.username);
   res.render('url_show', templateVars);
   //res.redirect(templateVars.longURL)
 });
@@ -200,7 +210,7 @@ app.post('/register', (req, res) => {
   const id = gernerateRandomString(4);
   const email = req.body.email;
   const password = req.body.password;
-  console.log(password);
+  //console.log(password);
   if (email.length === 0 || password.length === 0 ) {
     res.statusCode = 400;
     return;
