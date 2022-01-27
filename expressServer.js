@@ -20,7 +20,11 @@ const urlDatabase = {
 };
 
 const users = {
-
+  // id: {
+  //  id: alpha Numeric id,
+  //  email: user email,
+  //  password: user password, 
+  //  }
 };
 
 
@@ -44,20 +48,25 @@ const gernerateRandomString = (num) => {
 };
 
 const searchUsersByParam = (param) => {
+  
   for (let user in users){
-    for (let key in user) {
-      if (param === users.user.key)
+    
+    for (let key in users[user]) {
+      if (param === users[user][key])
       return true;
     }
   }
   return false;
 }
 
-// const attemptLogin = (email, password) => {
-//   for (let user in users) {
-
-//   }
-// }
+const attemptLogin = (email, password) => {
+  for (let user in users) {
+    if (users[user].email === email && users[user].password === password){
+      return users[user].id
+    }
+  }
+  return false;
+}
 
 //
 //for fun ignore
@@ -89,10 +98,7 @@ app.post("/urls", (req, res) => {
 
 //writes database to the screen as a JSON string
 app.get("/urls", (req, res) => {
-  //console.log(req.cookies['user_id']);
   const user = users[req.cookies['user_id']];
-  //console.log(req.cookies);
-  //console.log(user);
   const templateVars = {
     user,
     urls: urlDatabase,
@@ -154,7 +160,8 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  
+  console.log(attemptLogin(email, password));
+  attemptLogin(email, password)? res.cookie('user_id', attemptLogin(email, password)) : res.redirect('/login') ;
   
   res.redirect('/urls');
 });
@@ -180,9 +187,11 @@ app.post('/register', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   //console.log(users)
-  if (email.length === 0 || password.length === 0 || searchUsersByParam(email)) {
+  if (email.length === 0 || password.length === 0 ) {
     res.statusCode = 400;
     return;
+  } else if (searchUsersByParam(email)) {
+     res.redirect('/login');
   }
   
 
