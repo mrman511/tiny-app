@@ -15,8 +15,10 @@ app.set('view engine', 'ejs');
 //
 
 const urlDatabase = {
-  //"b2xVn2": "http://www.lighthouselabs.ca",
-  //"9sm5xK": "http://www.google.com"
+  //shortURL: {
+  //  longURL,
+  //  userID,  
+  //}
 };
 
 const users = {
@@ -97,11 +99,12 @@ app.get('/', (req, res) => {
 //writes database to the screen as a JSON string
 app.get("/urls", (req, res) => {
   const user = users[req.cookies['user_id']];
+  //const alter = users[req.cookies['unathorized-alteration']]
   const templateVars = {
     user,
     urls: urlDatabase,
   };
-  console.log(templateVars.urls);
+  //console.log(templateVars.urls);
   //console.log(user);
   res.render('urls_index', templateVars);
 });
@@ -139,6 +142,7 @@ app.get('/urls/:shortURL', (req, res) => {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
   };
+  res.cookie()
   res.render('url_show', templateVars);
   //res.redirect(templateVars.longURL)
 });
@@ -146,20 +150,34 @@ app.get('/urls/:shortURL', (req, res) => {
 //Delete website form urlDatabase
 app.post('/urls/:shortURL/delete', (req, res) => {
   const shortURL = req.params.shortURL;
-  delete urlDatabase[shortURL];
-  res.redirect('/urls');
+  const user = req.cookies['user_id'];
+  const urlCreatorId = urlDatabase[shortURL].userID
+
+  if (user === urlCreatorId){
+    delete urlDatabase[shortURL];
+    res.redirect('/urls');
+  }
+  //res.cookie('unauthorized-alteration', true);
+  res.redirect('/urls' )
 });
 
 //Edit Current URL from url_show.ejs
 app.post('/urls/:shortURL/edit', (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = req.body.longURL;
-  //console.log(req.body);
-  urlDatabase[shortURL] = {
-    longURL,
-    userID: req.cookies['user_id']
-  };
-  res.redirect('/urls');
+  const user = req.cookies['user_id'];
+  const urlCreatorId = urlDatabase[shortURL].userID
+
+  if (user === urlCreatorId){
+      urlDatabase[shortURL] = {
+      longURL,
+      userID: user
+    };
+    res.redirect('/urls');
+  }
+
+
+  
 });
 
 //redirect to URL site
