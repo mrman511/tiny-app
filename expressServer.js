@@ -15,8 +15,8 @@ app.set('view engine', 'ejs');
 //
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  //"b2xVn2": "http://www.lighthouselabs.ca",
+  //"9sm5xK": "http://www.google.com"
 };
 
 const users = {
@@ -49,6 +49,7 @@ const gernerateRandomString = (num) => {
 
 const searchUsersByParam = (email, password) => {
   if (!password) {
+    //console.log("HERE")
     for (let user in users){
         if (email === users[user].email)
         return users[user].id
@@ -199,7 +200,7 @@ app.post('/register', (req, res) => {
   const id = gernerateRandomString(4);
   const email = req.body.email;
   const password = req.body.password;
-  //console.log(users)
+  console.log(password);
   if (email.length === 0 || password.length === 0 ) {
     res.statusCode = 400;
     return;
