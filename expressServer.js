@@ -5,6 +5,8 @@ const app = express();
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs')
 
+//import helper functions
+const { generateRandomString } = require('./helperFuncs')
 
 const bodyParser = require("body-parser");
 const bcryptjs = require('bcryptjs');
@@ -22,20 +24,6 @@ app.use(cookieSession({
 
 
 
-const gernerateRandomString = (num) => {
-  const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-  let randomItems = [];
-  for (let i = 0; randomItems.length < num; i++) {
-    let num = Math.floor(Math.random() * 2);
-    if (num === 0) {
-      randomItems.push(String(Math.floor(Math.random() * 10)));
-    } else {
-      randomItems.push(alphabet[Math.floor(Math.random() * 26)]);
-    }
-  }
-  return (randomItems.join(''));
-};
-
 
 
 
@@ -43,7 +31,7 @@ const gernerateRandomString = (num) => {
 //DATA objects
 //
 
-const newID = gernerateRandomString(4);
+const newID = generateRandomString(4);
 
 const urlDatabase = {
   //shortURL: {
@@ -260,7 +248,7 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  const id = gernerateRandomString(4);
+  const id = generateRandomString(4);
   const email = req.body.email;
   const password = req.body.password;
   //console.log(password);
