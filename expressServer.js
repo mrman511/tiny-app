@@ -1,15 +1,14 @@
 const express = require('express');
-//const req = require('express/lib/request');
 const PORT = 8080;
 const app = express();
 const cookieSession = require('cookie-session');
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
 
 //import helper functions
-const { 
+const {
   generateRandomString,
-  checkEmailAndPassword 
-} = require('./helperFuncs')
+  checkEmailAndPassword
+} = require('./helperFuncs');
 
 const bodyParser = require("body-parser");
 const bcryptjs = require('bcryptjs');
@@ -22,8 +21,8 @@ app.use(cookieSession({
   keys: ['magical key'],
 
   // Cookie Options
-  maxAge: 50000, // 24 hours
-}))
+  maxAge: 50000, 
+}));
 
 //
 //DATA objects
@@ -33,7 +32,7 @@ app.use(cookieSession({
 const urlDatabase = {
   //shortURL: {
   //  longURL,
-  //  userID,  
+  //  userID,
   //}
 };
 
@@ -43,11 +42,6 @@ const users = {
   //  email: user email,
   //  hashedPass: hashed password,
   //  }
-  TxY76: { 
-    id: 'TxY76',
-    email: 'paul@paul.com',
-    hashedPass: bcrypt.hashSync('paul', 10),
-  }
 };
 
 
@@ -74,11 +68,7 @@ app.get('/', (req, res) => {
 
 //writes database to the screen as a JSON string
 app.get("/urls", (req, res) => {
-  const userID = req.session.user_id
-  console.log(userID);
-  for (url in urlDatabase){
-    console.log(urlDatabase[url]);
-  }
+  const userID = req.session.user_id;
   const templateVars = {
     users,
     userID,
@@ -93,9 +83,8 @@ app.post("/urls", (req, res) => {
   let alphaKey = req.body.shortURL = generateRandomString(6);  // Log the POST request body to the console
   urlDatabase[alphaKey] = {
     longURL: req.body.longURL,
-    userID: req.session.user_id 
+    userID: req.session.user_id
   };
-  //console.log(urlDatabase);
   res.redirect(`/urls/${alphaKey}`);
 });
 
@@ -114,7 +103,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  let userID = req.session.user_id
+  let userID = req.session.user_id;
   console.log(userID, users[userID].id);
   const templateVars = {
     users,
@@ -129,26 +118,26 @@ app.get('/urls/:shortURL', (req, res) => {
 //Delete website form urlDatabase
 app.post('/urls/:shortURL/delete', (req, res) => {
   const shortURL = req.params.shortURL;
-  const user = req.session.user_id//.cookies['user_id'];
-  const urlCreatorId = urlDatabase[shortURL].userID
+  const user = req.session.user_id;//.cookies['user_id'];
+  const urlCreatorId = urlDatabase[shortURL].userID;
 
-  if (user === urlCreatorId){
+  if (user === urlCreatorId) {
     delete urlDatabase[shortURL];
     res.redirect('/urls');
   }
   
-  res.redirect('/urls' )
+  res.redirect('/urls');
 });
 
 //Edit Current URL from url_show.ejs
 app.post('/urls/:shortURL/edit', (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = req.body.longURL;
-  const user = req.session.user_id//.cookies['user_id'];
-  const urlCreatorId = urlDatabase[shortURL].userID
+  const user = req.session.user_id;//.cookies['user_id'];
+  const urlCreatorId = urlDatabase[shortURL].userID;
 
-  if (user === urlCreatorId){
-      urlDatabase[shortURL] = {
+  if (user === urlCreatorId) {
+    urlDatabase[shortURL] = {
       longURL,
       userID: user
     };
@@ -162,12 +151,9 @@ app.post('/urls/:shortURL/edit', (req, res) => {
 //redirect to URL site
 app.get(`/u/:shortURL`, (req, res) => {
   let longURL = (urlDatabase[req.params.shortURL].longURL);
-  //console.log(urlDatabase);
-  //console.log(req)
   if (!longURL.startsWith('http')) {
     longURL = `http://${longURL}`;
   }
-  //console.log(longURL);
   res.redirect(longURL);
 });
 
@@ -184,12 +170,9 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  //console.log('HHHHHHEEEEEEERRRRRRREEEEEEE');
-  //console.log(checkEmailAndPassword(users, email, password))
-  const result = checkEmailAndPassword(users, email, password)
+  const result = checkEmailAndPassword(users, email, password);
 
-  if (result.data){
-    
+  if (result.data) {
     req.session.user_id = result.data;
     res.redirect('/urls');
   }
@@ -208,7 +191,6 @@ app.post('/logout', (req, res) => {
 //
 app.get('/register', (req, res) => {
   let user = req.session.user_id; //users[req.cookies['user_id']];
-
   let templateVars = {
     user,
   };
@@ -219,12 +201,11 @@ app.post('/register', (req, res) => {
   const id = generateRandomString(4);
   const email = req.body.email;
   const password = req.body.password;
-  
-
   const hashedPass = bcrypt.hashSync(password, 10);
-  const checkData = checkEmailAndPassword(users, email)
+  const checkData = checkEmailAndPassword(users, email);
+  
   if (checkData.data === 'match') {
-    res.status(400).redirect('/login')
+    res.status(400).redirect('/login');
   }
 
   users[id] = {
@@ -252,4 +233,4 @@ app.listen(PORT, () => {
 module.exports = {
   urlDatabase,
   users,
-}
+};

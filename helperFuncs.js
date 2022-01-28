@@ -1,6 +1,4 @@
-const bcrypt = require('bcryptjs')
-//const {urlDatabase, users} = require('./expressServer')
-
+const bcrypt = require('bcryptjs');
 
 const generateRandomString = (num) => {
   const alphabet = 'abcdefghijklmnopqrstuvwxyz';
@@ -20,14 +18,14 @@ const generateRandomString = (num) => {
 
 const checkEmailAndPassword = (usersDB, email, password) => {
   if (!email) {
-    return {'error': 'invalid input', data: null}
+    return {'error': 'invalid input', data: null};
   }
   // if no password compare emails to emails in the data base
-  if(password === undefined) {
+  if (password === undefined) {
     for (let user in usersDB) {
-      if (email === usersDB[user].email){
-        return {'error': 'matching email found in users', data: "match"}
-      };
+      if (email === usersDB[user].email) {
+        return {'error': 'matching email found in users', data: "match"};
+      }
     }
     return {'error': 'invalid input', 'data': 'register'};
   }
@@ -36,17 +34,16 @@ const checkEmailAndPassword = (usersDB, email, password) => {
   //mathches to one user returns login data
 
   for (let user in usersDB) {
-    
-    if (usersDB[user].email === email){
+    if (usersDB[user].email === email) {
       if (bcrypt.compareSync(password, usersDB[user].hashedPass)) {
         return {'error': null, 'data': usersDB[user].id};
       }
     }
   }
   return {'error': 'invalid input', data: null};
-}
+};
 
 module.exports = {
   generateRandomString,
   checkEmailAndPassword,
-}
+};
