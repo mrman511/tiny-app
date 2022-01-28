@@ -19,7 +19,6 @@ app.use(cookieSession({
   name: 'user_id',
   keys: ['magical key'],
 
-  // Cookie Options
   maxAge: 50000, 
 }));
 
@@ -116,7 +115,7 @@ app.get('/urls/:shortURL', (req, res) => {
 //Delete website form urlDatabase
 app.post('/urls/:shortURL/delete', (req, res) => {
   const shortURL = req.params.shortURL;
-  const user = req.session.user_id;//.cookies['user_id'];
+  const user = req.session.user_id;
   const urlCreatorId = urlDatabase[shortURL].userID;
 
   //only allow user to delete urls they did not create
@@ -132,7 +131,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 app.post('/urls/:shortURL/edit', (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = req.body.longURL;
-  const user = req.session.user_id;//.cookies['user_id'];
+  const user = req.session.user_id;
   const urlCreatorId = urlDatabase[shortURL].userID;
 
   if (user === urlCreatorId) {
@@ -189,7 +188,7 @@ app.post('/logout', (req, res) => {
 //Registration
 //
 app.get('/register', (req, res) => {
-  let user = req.session.user_id; //users[req.cookies['user_id']];
+  let user = req.session.user_id;
   let templateVars = {
     user,
   };
