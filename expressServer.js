@@ -13,7 +13,6 @@ const {
 const bodyParser = require("body-parser");
 const bcryptjs = require('bcryptjs');
 app.use(bodyParser.urlencoded({extended: true}));
-//app.use(cookieParser());
 app.set('view engine', 'ejs');
 
 app.use(cookieSession({
@@ -79,8 +78,7 @@ app.get("/urls", (req, res) => {
 
 
 app.post("/urls", (req, res) => {
-  
-  let alphaKey = req.body.shortURL = generateRandomString(6);  // Log the POST request body to the console
+  let alphaKey = req.body.shortURL = generateRandomString(6);
   urlDatabase[alphaKey] = {
     longURL: req.body.longURL,
     userID: req.session.user_id
@@ -93,7 +91,7 @@ app.post("/urls", (req, res) => {
 //
 
 app.get("/urls/new", (req, res) => {
-  const userID = req.session.user_id;//users[req.cookies['user_id']];
+  const userID = req.session.user_id;
   const templateVars = {
     users,
     userID,
@@ -102,9 +100,9 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
+//set up the specific url display page
 app.get('/urls/:shortURL', (req, res) => {
   let userID = req.session.user_id;
-  //console.log(userID, users[userID].id);
   const templateVars = {
     users,
     userID,
@@ -121,6 +119,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   const user = req.session.user_id;//.cookies['user_id'];
   const urlCreatorId = urlDatabase[shortURL].userID;
 
+  //only allow user to delete urls they did not create
   if (user === urlCreatorId) {
     delete urlDatabase[shortURL];
     res.redirect('/urls');
@@ -148,7 +147,7 @@ app.post('/urls/:shortURL/edit', (req, res) => {
   
 });
 
-//redirect to URL site
+//redirect to actual URL site
 app.get(`/u/:shortURL`, (req, res) => {
   let longURL = (urlDatabase[req.params.shortURL].longURL);
   if (!longURL.startsWith('http')) {
