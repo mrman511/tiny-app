@@ -22,7 +22,6 @@ const checkEmailAndPassword = (usersDB, email, password) => {
   if (!email) {
     return {'error': 'invalid input', data: null}
   }
-  
   // if no password compare emails to emails in the data base
   if(password === undefined) {
     for (let user in usersDB) {
@@ -35,15 +34,16 @@ const checkEmailAndPassword = (usersDB, email, password) => {
 
   //if email and password checks to see if they are
   //mathches to one user returns login data
- 
+
   for (let user in usersDB) {
+    
     if (usersDB[user].email === email){
-      if (bcrypt.compareSync(password, usersDB[user].hashedPass)){
+      if (bcrypt.compareSync(password, usersDB[user].hashedPass)) {
         return {'error': null, 'data': usersDB[user].id};
       }
     }
-    return {'error': 'invalid input', data: null};
   }
+  return {'error': 'invalid input', data: null};
 }
 
 module.exports = {

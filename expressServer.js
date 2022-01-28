@@ -1,5 +1,5 @@
 const express = require('express');
-const req = require('express/lib/request');
+//const req = require('express/lib/request');
 const PORT = 8080;
 const app = express();
 const cookieSession = require('cookie-session');
@@ -25,11 +25,6 @@ app.use(cookieSession({
   maxAge: 50000, // 24 hours
 }))
 
-
-
-
-
-
 //
 //DATA objects
 //
@@ -50,43 +45,12 @@ const users = {
   //  }
   TxY76: { 
     id: 'TxY76',
-    email: 'tool@tool.com',
-    hashedPass: bcrypt.hashSync('tool', 10),
+    email: 'paul@paul.com',
+    hashedPass: bcrypt.hashSync('paul', 10),
   }
 };
 
 
-
-//
-//Relavent functions
-//
-
-
-
-const searchUsersByParam = (email, password) => {
-  if (!password) {
-    //console.log("HERE")
-    for (let user in users) {
-      if (email === users[user].email)
-        return users[user].id;
-    }
-    return false;
-  } else {
-    if (users[searchUsersByParam(email)].password === password) {
-      return true;
-    }
-    return false;
-  }
-};
-
-const attemptLogin = (email, password) => {
-  for (let user in users) {
-    if (users[user].email === email && users[user].hashedPass === password) {
-      return users[user].id;
-    }
-  }
-  return false;
-};
 
 //
 //for fun ignore
@@ -99,8 +63,6 @@ app.get('/Paul', (req, res) => {
 
 
 
-//cookie handler
-
 //
 //Main page
 //
@@ -112,21 +74,20 @@ app.get('/', (req, res) => {
 
 //writes database to the screen as a JSON string
 app.get("/urls", (req, res) => {
-  const user = req.session.user_id//users[req.cookies['user_id']];
-  //console.log(user);
-  //console.log(users);
+  const userID = req.session.user_id
+  console.log(userID);
   const templateVars = {
-    user,
+    users,
+    userID,
     urls: urlDatabase,
   };
-  //console.log(templateVars.urls);
   res.render('urls_index', templateVars);
 });
 
 
 app.post("/urls", (req, res) => {
   
-  let alphaKey = req.body.shortURL = gernerateRandomString(6);  // Log the POST request body to the console
+  let alphaKey = req.body.shortURL = generateRandomString(6);  // Log the POST request body to the console
   urlDatabase[alphaKey] = {
     longURL: req.body.longURL,
     userID: req.session.user_id.id //.cookies['user_id']
@@ -140,25 +101,26 @@ app.post("/urls", (req, res) => {
 //
 
 app.get("/urls/new", (req, res) => {
-  const user = req.session.user_id;//users[req.cookies['user_id']];
+  const userID = req.session.user_id;//users[req.cookies['user_id']];
   const templateVars = {
-    user,
+    users,
+    userID,
     urls: urlDatabase,
   };
   res.render("urls_new", templateVars);
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  let user = req.session.user_id//users[req.cookies['user_id']];
-  //console.log();
+  let userID = req.session.user_id
+  console.log(userID, users[userID].id);
   const templateVars = {
-    user,
+    users,
+    userID,
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
   };
-  res.cookie()
   res.render('url_show', templateVars);
-  //res.redirect(templateVars.longURL)
+  
 });
 
 //Delete website form urlDatabase
@@ -171,7 +133,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
     delete urlDatabase[shortURL];
     res.redirect('/urls');
   }
-  //res.cookie('unauthorized-alteration', true);
+  
   res.redirect('/urls' )
 });
 
@@ -219,15 +181,16 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  for (let user in users) {
-    if (users[user].email === email){
-      if (bcrypt.compareSync(password, users[user].hashedPass)){
-        
-        req.session.user_id = users[user];
-        res.redirect('/urls');
-      }
-    }
+  //console.log('HHHHHHEEEEEEERRRRRRREEEEEEE');
+  //console.log(checkEmailAndPassword(users, email, password))
+  const result = checkEmailAndPassword(users, email, password)
+
+  if (result.data){
+    
+    req.session.user_id = result.data;
+    res.redirect('/urls');
   }
+  
   res.status(403).redirect('/login');
   
 });
@@ -253,11 +216,10 @@ app.post('/register', (req, res) => {
   const id = generateRandomString(4);
   const email = req.body.email;
   const password = req.body.password;
-  //console.log(password);
+  
 
   const hashedPass = bcrypt.hashSync(password, 10);
   const checkData = checkEmailAndPassword(users, email)
-  console.log(checkData.data);
   if (checkData.data === 'match') {
     res.status(400).redirect('/login')
   }
@@ -267,8 +229,8 @@ app.post('/register', (req, res) => {
     email,
     hashedPass,
   };
-  req.session.user_id = users[id];
-  //console.log(users);
+  
+  req.session.user_id = id;
   res.redirect('/urls');
 });
 

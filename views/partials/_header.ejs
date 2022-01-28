@@ -6,16 +6,16 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <% if (user) { %><a class="nav-item nav-link" href="/urls">My URLs</a>
+        <% if (userID) { %><a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a> <% } %>
       </div>
 
     </div>
     <div style =" display: inline-block; position: relative;  width: 50%;">
-      <% if (!user) { %>
+      <% if (!userID) { %>
       <%- include('./loginButton') %>
       <% } else { %>
-        <h3 style= "display: inline-block;" >Hello, <strong><%= user.email %></strong></h3>
+        <h3 style= "display: inline-block;" >Hello, <strong><%= users[userID].email %></strong></h3>
         <%- include('./_logoutButton') %>
       <% } %>
     </div>

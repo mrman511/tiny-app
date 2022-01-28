@@ -11,7 +11,7 @@
 <body>
   <%- include('partials/_header') %>
   <main style="margin: 1em;">
-    <% if (user) {%>
+    <% if (userID) {%>
     <h3>My URLs</h3>
     <table class="table">
       <thead>
@@ -33,7 +33,7 @@
             <td>
               <form method="GET" action="/urls/<%= url %>">
 
-                <% if (user && urls[url].userID === user.id) { %>
+                <% if (userID && urls[url].userID === userID) { %>
                 <button type="submit" class="btn btn-primary">Edit</button>
                 <% } %>
 
@@ -42,7 +42,7 @@
             <td>
               <form method="POST" action="/urls/<%= url %>/delete">
 
-                <% if (user && urls[url].userID === user.id) { %>
+                <% if (userID && urls[url].userID === userID) { %>
                 <button type="submit" class="btn btn-primary">Delete</button>
                 <% } %>
 
