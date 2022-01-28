@@ -177,7 +177,7 @@ app.post('/login', (req, res) => {
     res.redirect('/urls');
   }
   
-  res.status(403).redirect('/login');
+  res.status(403);
   
 });
 
@@ -202,10 +202,12 @@ app.post('/register', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const hashedPass = bcrypt.hashSync(password, 10);
+
+  //see if entered email is already in the database
   const checkData = checkEmailAndPassword(users, email);
-  
   if (checkData.data === 'match') {
-    res.status(400).redirect('/login');
+    res.status(400);
+    res.render('login');
   }
 
   users[id] = {
@@ -228,9 +230,3 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`the server is listening or port ${PORT}`);
 });
-
-
-module.exports = {
-  urlDatabase,
-  users,
-};
