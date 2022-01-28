@@ -76,6 +76,9 @@ app.get('/', (req, res) => {
 app.get("/urls", (req, res) => {
   const userID = req.session.user_id
   console.log(userID);
+  for (url in urlDatabase){
+    console.log(urlDatabase[url]);
+  }
   const templateVars = {
     users,
     userID,
@@ -90,10 +93,10 @@ app.post("/urls", (req, res) => {
   let alphaKey = req.body.shortURL = generateRandomString(6);  // Log the POST request body to the console
   urlDatabase[alphaKey] = {
     longURL: req.body.longURL,
-    userID: req.session.user_id.id //.cookies['user_id']
+    userID: req.session.user_id 
   };
   //console.log(urlDatabase);
-  res.redirect(`/urls/${alphaKey}`); // Respond with a redirect to urls/:shortURL;
+  res.redirect(`/urls/${alphaKey}`);
 });
 
 //
