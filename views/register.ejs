@@ -7,31 +7,30 @@
   <title>TinyApp - Register</title>
 
   <!-- Bootstrap CSS -->
+  
+  <link rel ="stylesheet" href = '../style.css'>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
 </head>
 <body>
   <%- include('partials/_registrationHeader') %>
-  <section style = "height: 20em; display: flex; justify-content: center; flex-direction: column; border: 1px solid black;">
-    <article style = "height: 100%; width: auto; display: flex; align-content: center; justify-content: center; border: 1px solid red">
+  <section style = "height: 20em; display: flex; align-items: center; ">
       
-      <form action ="/register" method ="POST" style = "height: 100%; display: grid; grid-template-rows: 2fr 1fr 1fr 1fr; grid-template-columns: 1fr;" >
-        <h3 style = "max-height: 2em; position: relative; grid-area: 1 / 1 / span 1/ span 1;">Create Account</h3>
+      <form class = "form-grid" action ="/register" method ="POST"  style="position: relative; margin: auto;" >
+        <h3 class = "grid1" style = "max-width: 7em; margin: 1em auto;">Create Account</h3>
         
-        <div style = "position: relative; height: 2.5em; grid-area: 2 / 1 / span 1/ span 1;  justify-self: center; align-self: center; border: 1px solid blue;">
-          <div style = " display: block; height: 2em; width: auto;">
+          <div class = "grid2" style = "margin: .5em auto">
             <h5 style = "display: inline" >Email:</h5>
             <input class="form-control" type="email" name="email" placeholder="email" style="width: 300px; margin: 0; display: inline;">
           </div>
   
-          <div style = "height: 2.5em; grid-area: 3 / 1 / span 1/ span 1;  justify-self: center; align-self: center; border: 1px solid blue;">
+          <div  class = "grid3" >
             <h5 style = "display: inline;">Password:</h5>
             <input class="form-control" type="password" name="password" placeholder="password" style="width: 300px; margin: 0; display: inline;">
           </div>
-        </div>
 
-      <button type="submit" class="btn btn-primary" style = "position: relative; max-width: 5em; max-height: 2em; grid-area: 4 / 1 / span 1/ span 1; justify-self: center; align-self: center;">Submit</button>
+      <button style = "margin: 1em auto" type="submit" class="btn btn-primary" >Submit</button>
     </form>
-    </article>
     
   </section>
 
