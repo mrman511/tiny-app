@@ -6,7 +6,10 @@ const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs')
 
 //import helper functions
-const { generateRandomString } = require('./helperFuncs')
+const { 
+  generateRandomString,
+  checkEmailAndPassword 
+} = require('./helperFuncs')
 
 const bodyParser = require("body-parser");
 const bcryptjs = require('bcryptjs');
@@ -31,7 +34,6 @@ app.use(cookieSession({
 //DATA objects
 //
 
-const newID = generateRandomString(4);
 
 const urlDatabase = {
   //shortURL: {
@@ -111,7 +113,7 @@ app.get('/', (req, res) => {
 //writes database to the screen as a JSON string
 app.get("/urls", (req, res) => {
   const user = req.session.user_id//users[req.cookies['user_id']];
-  console.log(user);
+  //console.log(user);
   //console.log(users);
   const templateVars = {
     user,
@@ -254,14 +256,11 @@ app.post('/register', (req, res) => {
   //console.log(password);
 
   const hashedPass = bcrypt.hashSync(password, 10);
-
-  if (email.length === 0 || password.length === 0) {
-    res.statusCode = 400;
-    return;
-  } else if (searchUsersByParam(email)) {
-    res.redirect('/login');
+  const checkData = checkEmailAndPassword(users, email)
+  console.log(checkData.data);
+  if (checkData.data === 'match') {
+    res.status(400).redirect('/login')
   }
-  
 
   users[id] = {
     id,
@@ -283,3 +282,9 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`the server is listening or port ${PORT}`);
 });
+
+
+module.exports = {
+  urlDatabase,
+  users,
+}
